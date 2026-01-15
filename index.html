@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phone Store Management</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header / Navbar -->
+    <header>
+      <div class="logo">
+        <i class="fa-solid fa-mobile-screen-button"></i> PHONE STORE
+      </div>
+      <div class="nav-buttons">
+        <button onclick="toggleCart()" class="btn-cart relative">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span id="cart-count" class="badge">0</span>
+        </button>
+        <button onclick="toggleView()" class="btn-admin">
+          <i class="fa-solid fa-user-gear"></i> Admin
+        </button>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- VIEW: KHÁCH HÀNG (Mặc định hiển thị) -->
+      <section id="customer-view">
+        <div class="section-header">
+          <h2>📱 Sản Phẩm Mới Nhất</h2>
+          <div class="search-box">
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Tìm kiếm điện thoại..."
+              onkeyup="searchProduct()"
+            />
+          </div>
+        </div>
+
+        <div id="loading" class="text-center hidden">
+          <i class="fa-solid fa-spinner fa-spin"></i> Đang tải dữ liệu từ
+          Server...
+        </div>
+
+        <div id="product-grid" class="grid">
+          <!-- Sản phẩm sẽ được render tại đây -->
+        </div>
+      </section>
+
+      <!-- VIEW: ADMIN (Mặc định ẩn) -->
+      <section id="admin-view" class="hidden">
+        <div class="section-header">
+          <h2>🛠️ Trang Quản Trị</h2>
+          <button onclick="fetchReports()" class="btn-refresh">
+            <i class="fa-solid fa-rotate-right"></i> Làm mới báo cáo
+          </button>
+        </div>
+
+        <!-- Báo cáo thống kê (Gọi API /api/reports) -->
+        <div id="reports-panel" class="stats-grid">
+          <!-- Dữ liệu báo cáo sẽ hiện ở đây -->
+          <p>Đang tải báo cáo...</p>
+        </div>
+
+        <div class="admin-layout">
+          <!-- Form Thêm mới -->
+          <div class="card form-card">
+            <h3>Thêm Điện Thoại Mới</h3>
+            <form id="add-form">
+              <div class="form-group">
+                <label>Tên sản phẩm</label>
+                <input
+                  type="text"
+                  id="p-name"
+                  required
+                  placeholder="VD: iPhone 15 Pro"
+                />
+              </div>
+              <div class="form-group">
+                <label>Hãng sản xuất</label>
+                <input
+                  type="text"
+                  id="p-brand"
+                  required
+                  placeholder="VD: Apple"
+                />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Giá (VNĐ)</label>
+                  <input type="number" id="p-price" required />
+                </div>
+                <div class="form-group">
+                  <label>Số lượng kho</label>
+                  <input type="number" id="p-qty" required />
+                </div>
+              </div>
+              <button type="submit" class="btn-success width-full">
+                <i class="fa-solid fa-plus"></i> Lưu Sản Phẩm
+              </button>
+            </form>
+          </div>
+
+          <!-- Danh sách quản lý -->
+          <div class="card list-card">
+            <h3>Kho Hàng (Database)</h3>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Tên</th>
+                    <th>Giá</th>
+                    <th>Kho</th>
+                    <th>Hành động</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-tbody">
+                  <!-- Dữ liệu bảng admin -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal Giỏ Hàng -->
+    <div id="cart-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Giỏ Hàng Của Bạn</h3>
+          <span onclick="toggleCart()" class="close-btn">&times;</span>
+        </div>
+        <div id="cart-items" class="modal-body">
+          <p class="empty-cart">Giỏ hàng trống</p>
+        </div>
+        <div class="modal-footer">
+          <div class="total-price">Tổng: <span id="cart-total">0 ₫</span></div>
+          <button onclick="checkout()" class="btn-primary width-full">
+            Thanh Toán
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thông báo (Toast) -->
+    <div id="toast"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
