@@ -5,7 +5,9 @@ const API_URL = 'http://localhost:3000/api';
 let products = []; // Biến lưu danh sách sản phẩm tải từ server
 let cart = [];     // Biến lưu giỏ hàng tạm thời
 
+// ==============================================
 // 1. KẾT NỐI SERVER (GỌI API)
+// ==============================================
 
 // Hàm tải danh sách điện thoại từ Server
 async function fetchProducts() {
