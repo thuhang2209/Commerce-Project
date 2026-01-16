@@ -54,8 +54,11 @@ app.use(notFound);
 // Error handler
 app.use(errorHandler);
 
-// ===== START SERVER =====
+// ===== SERVER SETUP =====
 
+/**
+ * Hàm khởi động Server (Dành cho chạy Local)
+ */
 async function startServer() {
     try {
         // Ket noi database
@@ -83,9 +86,21 @@ async function startServer() {
 process.on('SIGINT', async () => {
     console.log('\nShutting down server...');
     const { closeDB } = require('./config/db');
-    await closeDB();
+    if (closeDB) await closeDB();
     process.exit(0);
 });
 
-// Start!
-startServer();
+// ===== QUAN TRỌNG: CẤU HÌNH CHO VERCEL =====
+
+// Kiểm tra xem file này có đang được chạy trực tiếp không (node index.js)
+if (require.main === module) {
+    // Nếu chạy Local -> Gọi hàm startServer để lắng nghe PORT
+    startServer();
+} else {
+    // Nếu chạy trên Vercel -> Chỉ kết nối DB, KHÔNG gọi app.listen()
+    // Vercel sẽ tự quản lý việc listen port
+    connectDB().then(() => console.log('Connected to DB on Vercel'));
+}
+
+// XUẤT APP ĐỂ VERCEL CÓ THỂ CHẠY (Đây là dòng sửa lỗi "No exports found")
+module.exports = app;
