@@ -18,13 +18,13 @@ app.use(logger);
 // ===== ROUTES =====
 app.use('/api', routes);
 
-app.get('/', (req, res) => {
+/*app.get('/', (req, res) => {
     res.json({
         message: 'Chao mung den voi Phone Store API!',
         docs: '/api',
         version: '1.0.0'
     });
-});
+});*/
 
 // ===== ERROR HANDLING =====
 app.use(notFound);
