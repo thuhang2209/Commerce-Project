@@ -1,6 +1,6 @@
 
 // ĐỊA CHỈ SERVER CỦA BẠN (Dựa theo file server bạn cung cấp)
-const API_URL = 'http://localhost:3000/api'; 
+const API_URL = '/api'; 
 
 let products = []; // Biến lưu danh sách sản phẩm tải từ server
 let cart = [];     // Biến lưu giỏ hàng tạm thời
