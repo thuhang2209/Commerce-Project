@@ -6,7 +6,11 @@
 // Load environment variables
 require('dotenv').config();
 
+
+module.exports = { handler: serverless(app) };
+
 const express = require('express');
+const serverless = require('serverless-http');
 const cors = require('cors');
 
 // Import modules
