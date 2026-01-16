@@ -1,63 +1,53 @@
 /**
-* Database connecttion
-* Quan ly ket noi MongoDB
-*/
-
+ * db.js - Phiên bản tối ưu cho Vercel (Native MongoDB Driver)
+ */
 require("dotenv").config();
+const { MongoClient } = require("mongodb");
 
-const {MongoClient} = require("mongodb");
-
-let db = null;
-let client = null;
-
-/**
-*  Ket noi toi MongoDB
-*/
-
-async function connectDB() {
-if (db) return db;
-
-try {
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.DB_NAME || "projects";
 
-client = new MongoClient(uri);
-await client.connect();
-
-db = client.db(dbName);
-console.log(`[DB] Connected to MongoDB - Database: ${dbName}`);
-
-return db;
-} catch (error) {
-console.error (` [DB] Wrong Connection:`, error.message);
-throw error;
-} 
+if (!uri) {
+  throw new Error(
+    "❌ Thiếu biến môi trường MONGODB_URI trong file .env hoặc Vercel Settings"
+  );
 }
 
-/**
-* Lay instance database
-*/
+let cachedClient = null;
+let cachedDb = null;
+
+async function connectDB() {
+  // 1. Nếu đã có kết nối trong bộ nhớ thì dùng lại ngay (Rất quan trọng cho Vercel)
+  if (cachedClient && cachedDb) {
+    return cachedDb;
+  }
+
+  // 2. Nếu chưa có, tạo kết nối mới
+  try {
+    const client = new MongoClient(uri, {
+      // Các tùy chọn này giúp kết nối ổn định hơn trên Serverless
+      connectTimeoutMS: 10000, // 10 giây timeout
+      socketTimeoutMS: 45000,
+    });
+
+    await client.connect();
+
+    cachedClient = client;
+    cachedDb = client.db(dbName);
+
+    console.log(`✅ [DB] New connection established to: ${dbName}`);
+    return cachedDb;
+  } catch (error) {
+    console.error("❌ [DB] Connection failed:", error.message);
+    throw error;
+  }
+}
+
 function getDB() {
-if (!db) {
-throw new Error("Database cannot connect! Call connectDB() first");
-}
-return db;
-}
-
-/**
-* Dong ket noi
-*/
-async function closeDB(){
-if (client) {
-await client.close();
-db = null;
-client = null;
-console.log("[DB] Closed collection!");
-}
+  if (!cachedDb) {
+    throw new Error("Database not initialized. Call connectDB() first!");
+  }
+  return cachedDb;
 }
 
-module.exports = {
-connectDB,
-getDB,
-closeDB
-};
+module.exports = { connectDB, getDB };
