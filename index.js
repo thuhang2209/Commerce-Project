@@ -89,4 +89,5 @@ process.on('SIGINT', async () => {
 });
 
 // Start!
-startServer();
+module.exports = app;
+
